@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  web:
+    labels:
+      - io.docksal.virtual-host=drupal-testcase.docksal.site
+  cli:
+    environment:
+      - MYSQL_DATABASE
+      - MYSQL_PASSWORD
+      - MYSQL_USER
