@@ -15,6 +15,8 @@ fin start;
 **Admin Password:** `4gLKtcL7IjUGq8t`
 
 
-### Sources
+### Import Newsarticle
 
-- https://www.drupal.org/docs/drupal-apis/entity-api/creating-a-content-entity-type-in-drupal-8 (Custom Entity Type)
+```fin drush import-news```
+
+**Note:** If you are using docksal please do not use the fin prefix.
