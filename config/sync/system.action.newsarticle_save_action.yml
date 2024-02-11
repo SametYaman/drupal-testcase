@@ -1,0 +1,13 @@
+uuid: ddaec8f7-95bf-41eb-b48f-39a44d8f8ed3
+langcode: en
+status: true
+dependencies:
+  module:
+    - newsarticle
+_core:
+  default_config_hash: d5wrl14OMYGH2qNz4P1m-Tt9kw5w6z_jyc8ugYSr8qo
+id: newsarticle_save_action
+label: 'Save newsarticles'
+type: newsarticle
+plugin: 'entity:save_action:newsarticle'
+configuration: {  }

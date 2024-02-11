@@ -1,0 +1,11 @@
+entity.newsarticle.settings:
+  title: 'Newsarticle'
+  description: 'Configure a Newsarticle entity type.'
+  route_name:  entity.newsarticle.settings
+  parent: system.admin_structure
+
+entity.newsarticle.collection:
+  title: 'Newsarticles'
+  description: 'List of newsarticles.'
+  route_name: entity.newsarticle.collection
+  parent: system.admin_content

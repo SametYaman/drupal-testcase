@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - newsarticle
+id: newsarticle_delete_action
+label: 'Delete newsarticles'
+type: newsarticle
+plugin: entity:delete_action:newsarticle
+configuration: {  }

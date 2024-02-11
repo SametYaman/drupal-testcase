@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - newsarticle
+id: newsarticle_save_action
+label: 'Save newsarticles'
+type: newsarticle
+plugin: entity:save_action:newsarticle
+configuration: {  }

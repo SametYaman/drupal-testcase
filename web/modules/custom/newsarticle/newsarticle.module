@@ -1,0 +1,92 @@
+<?php declare(strict_types = 1);
+
+/**
+ * @file
+ * Provides a newsarticle entity type.
+ */
+
+use Drupal\Core\Render\Element;
+use Drupal\user\UserInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function newsarticle_theme(): array {
+  return [
+    'newsarticle' => ['render element' => 'elements'],
+  ];
+}
+
+/**
+ * Prepares variables for newsarticle templates.
+ *
+ * Default template: newsarticle.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the newsarticle information and any
+ *     fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_newsarticle(array &$variables): void {
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_user_cancel().
+ */
+function newsarticle_user_cancel($edit, UserInterface $account, $method): void {
+  switch ($method) {
+    case 'user_cancel_block_unpublish':
+      // Unpublish newsarticles.
+      $storage = \Drupal::entityTypeManager()->getStorage('newsarticle');
+      $newsarticle_ids = $storage->getQuery()
+        ->condition('uid', $account->id())
+        ->condition('status', 1)
+        ->accessCheck(FALSE)
+        ->execute();
+      foreach ($storage->loadMultiple($newsarticle_ids) as $newsarticle) {
+        $newsarticle->set('status', FALSE)->save();
+      }
+      break;
+
+    case 'user_cancel_reassign':
+      // Anonymize newsarticles.
+      $storage = \Drupal::entityTypeManager()->getStorage('newsarticle');
+      $newsarticle_ids = $storage->getQuery()
+        ->condition('uid', $account->id())
+        ->accessCheck(FALSE)
+        ->execute();
+      foreach ($storage->loadMultiple($newsarticle_ids) as $newsarticle) {
+        $newsarticle->setOwnerId(0)->save();
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_predelete() for user entities.
+ */
+function newsarticle_user_predelete(UserInterface $account): void {
+  // Delete newsarticles that belong to this account.
+  $storage = \Drupal::entityTypeManager()->getStorage('newsarticle');
+  $newsarticle_ids = $storage->getQuery()
+    ->condition('uid', $account->id())
+    ->accessCheck(FALSE)
+    ->execute();
+  $storage->delete(
+    $storage->loadMultiple($newsarticle_ids)
+  );
+  // Delete old revisions.
+  $newsarticle_ids = $storage->getQuery()
+    ->allRevisions()
+    ->condition('uid', $account->id())
+    ->accessCheck(FALSE)
+    ->execute();
+  foreach (array_keys($newsarticle_ids) as $revision_id) {
+    $storage->deleteRevision($revision_id);
+  }
+}

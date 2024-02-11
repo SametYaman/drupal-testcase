@@ -1,0 +1,6 @@
+services:
+  newsarticle.drush_commands:
+    class: \Drupal\newsarticle\Commands\NewsarticleCommands
+    tags:
+      - { name: drush.command }
+    arguments: ['@http_client']

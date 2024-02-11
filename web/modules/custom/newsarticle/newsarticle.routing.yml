@@ -1,0 +1,7 @@
+entity.newsarticle.settings:
+  path: 'admin/structure/newsarticle'
+  defaults:
+    _form: '\Drupal\newsarticle\Form\NewsarticleSettingsForm'
+    _title: 'Newsarticle'
+  requirements:
+    _permission: 'administer newsarticle'

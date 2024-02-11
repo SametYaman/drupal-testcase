@@ -1,0 +1,13 @@
+uuid: e46a4ae8-2fc8-40b0-8eda-bd88eb01367a
+langcode: en
+status: true
+dependencies:
+  module:
+    - newsarticle
+_core:
+  default_config_hash: GADhFz01R71_mDSQsg4y-wrTtnFYizOxdgBXYfbZyfw
+id: newsarticle_delete_action
+label: 'Delete newsarticles'
+type: newsarticle
+plugin: 'entity:delete_action:newsarticle'
+configuration: {  }

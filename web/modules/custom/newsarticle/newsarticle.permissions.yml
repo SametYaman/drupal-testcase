@@ -1,0 +1,11 @@
+administer newsarticle:
+  title: 'Administer newsarticles'
+  restrict access: true
+view newsarticle:
+  title: 'View newsarticle'
+edit newsarticle:
+  title: 'Edit newsarticle'
+delete newsarticle:
+  title: 'Delete newsarticle'
+create newsarticle:
+  title: 'Create newsarticle'
