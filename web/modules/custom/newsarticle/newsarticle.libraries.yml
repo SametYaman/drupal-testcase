@@ -1,0 +1,12 @@
+bootstrap-cdn:
+  remote: true
+  version: 5.0.0
+  license:
+    name: MIT
+    url: https://raw.githubusercontent.com/twbs/bootstrap/main/LICENSE
+    gpl-compatible: true
+  js:
+    https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js: { type: external, minified: true }
+  css:
+    theme:
+      https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css: { type: external, minified: true }

@@ -1,0 +1,52 @@
+{{ attach_library('newsarticle/bootstrap-cdn') }}
+
+<div class="newsarticle-filter mb-4">
+  <form action="{{ path('newsarticle.overview') }}" method="get" class="row align-items-center">
+    <div class="col-auto">
+      <label for="uid" class="form-label" style="font-weight: bold; margin-right: 5px;">{{ 'Author:'|t }}</label>
+    </div>
+    <div class="col">
+      <select name="uid" id="uid" class="form-select">
+        <option value="">{{ '- All -'|t }}</option>
+        {% for userId, userLabel in user_options %}
+        <option value="{{ userId }}" {% if selected_user == userId %}selected{% endif %}>{{ userLabel }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-secondary py-3">Filter</button>
+    </div>
+  </form>
+</div>
+
+{% if newsarticles is empty %}
+<div class="alert alert-dark" role="alert">
+{{ 'No content was found matching your filter.'|t }}
+</div>
+{% else %}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for newsarticle in newsarticles %}
+        <div class="col">
+            <div class="card h-100 card-equal-height">
+                <div class="card-body">
+                    <p class="card-text">
+                        <span class="badge bg-secondary">{{ newsarticle.author }}</span>
+                    </p>
+                    <p class="card-text">
+                        <span class="badge bg-primary">{{ newsarticle.pubDate|date("d/m/Y H:i:s") }}</span>
+                    </p>
+                    <h4 class="card-title mt-0">{{ newsarticle.title }}</h4>
+                    <p class="card-text  mb-0">{{ newsarticle.description|truncate(140)|raw }}'...'</p>
+                    <a href="{{ newsarticle.link }}" class="stretched-link"></a>
+              </div>
+           </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="d-flex justify-content-center mt-4">
+  <div>{{ pager }}</div>
+</div>
+{% endif %}
+
+

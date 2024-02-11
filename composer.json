@@ -21,7 +21,8 @@
         "drupal/core-composer-scaffold": "^10.2",
         "drupal/core-project-message": "^10.2",
         "drupal/core-recommended": "^10.2",
-        "drupal/gin": "^3.0@RC"
+        "drupal/gin": "^3.0@RC",
+        "drupal/twig_tweak": "^3.2"
     },
     "conflict": {
         "drupal/drupal": "*"

@@ -13,7 +13,16 @@ use Drupal\user\UserInterface;
  */
 function newsarticle_theme(): array {
   return [
-    'newsarticle' => ['render element' => 'elements'],
+    'newsarticle' => [
+      'render element' => 'elements'
+    ],
+    'newsarticle_list' => [
+      'variables' => [
+        'newsarticles' => [],
+        'user_options' => [],
+        'selected_user' => 0,
+        'pager' => ''],
+    ],
   ];
 }
 

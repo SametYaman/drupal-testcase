@@ -21,3 +21,11 @@ newsarticle.remove_all:
     _controller: '\Drupal\newsarticle\Controller\NewsarticleController::removeAll'
   requirements:
     _permission: 'administer site configuration'
+
+newsarticle.overview:
+  path: '/newsarticle'
+  defaults:
+    _title: 'Newsarticle List'
+    _controller: '\Drupal\newsarticle\Controller\NewsarticleController::buildOverviewPage'
+  requirements:
+    _permission: 'access content'

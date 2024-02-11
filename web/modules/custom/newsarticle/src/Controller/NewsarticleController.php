@@ -3,9 +3,12 @@
 namespace Drupal\newsarticle\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Pager\PagerManagerInterface;
 use Drupal\newsarticle\Entity\Newsarticle;
+use Drupal\user\Entity\User;
 use GuzzleHttp\ClientInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Returns responses for Newsarticle routes.
@@ -17,6 +20,20 @@ final class NewsarticleController extends ControllerBase {
    * @var \GuzzleHttp\ClientInterface
    */
   protected $httpClient;
+
+  /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The pager manager service.
+   *
+   * @var \Drupal\Core\Pager\PagerManagerInterface
+   */
+  protected $pagerManager;
   
   /**
    * Constructor for NewsarticleCommands.
@@ -24,8 +41,10 @@ final class NewsarticleController extends ControllerBase {
    * @param \GuzzleHttp\ClientInterface $http_client
    *   A Guzzle client object.
    */
-  public function __construct(ClientInterface $http_client) {
+  public function __construct(ClientInterface $http_client, EntityTypeManagerInterface $entity_type_manager, PagerManagerInterface $pager_manager) {
     $this->httpClient = $http_client;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->pagerManager = $pager_manager;
   }
   
   /**
@@ -38,6 +57,62 @@ final class NewsarticleController extends ControllerBase {
         'max-age' => 0
       ]
     ];
+  }
+ 
+  /**
+   * Controller route callback.
+   */
+  public function buildOverviewPage(Request $request) {
+    $build = [];
+    $userStorage = \Drupal::entityTypeManager()->getStorage('user');
+    $newsarticleStorage = \Drupal::entityTypeManager()->getStorage('newsarticle');
+
+    $query = \Drupal::entityQuery('newsarticle')->accessCheck(FALSE);
+    $query->sort('created', 'DESC');
+
+    // User Exposed Filter Options.
+    $users = \Drupal::entityTypeManager()->getStorage('user')->loadMultiple();
+    $user_options = [];
+    foreach ($users as $user) {
+      if (!$user->hasRole('administrator') && $user->id() != 0) {
+        $user_options[$user->id()] = $user->getDisplayName();
+      }
+    }
+
+    $uid = \Drupal::request()->query->get('uid');
+    if (!empty($uid)) {
+      $query->condition('uid', $uid);
+    }
+    $pager = $query->pager(21);
+    $result = $query->execute();
+    $newsarticles = [];
+    foreach ($result as $newsarticle_id) {
+      $newsarticle = $newsarticleStorage->load($newsarticle_id);
+      $authorId = $newsarticle->get('uid')->target_id;
+      $author = $userStorage->load($authorId);
+      $newsarticles[] = [
+        'title' => $newsarticle->get('label')->value,
+        'description' => $newsarticle->get('body')->value,
+        'pubDate' => $newsarticle->get('created')->value,
+        'author' => ($author instanceof User) ? $author->getDisplayName() : $authorId,
+        'link' => $newsarticle->toUrl()->toString(),
+      ];
+    }
+
+    $build = [
+      '#theme' => 'newsarticle_list',
+      '#newsarticles' => $newsarticles,
+      '#user_options' => $user_options,
+      '#selected_user' => (is_numeric($uid) ? $uid : ''),
+      '#pager' => [
+        '#type' => 'pager',
+      ],
+      '#cache' => [
+        'max-age' => 0
+      ]
+    ];
+
+    return $build;
   }
   
   /**
@@ -139,7 +214,7 @@ final class NewsarticleController extends ControllerBase {
   }
 
   /**
-   * Create a newsarticle.
+   * Insert all newsarticle.
    */
   public static function createNewsarticle($newsItem = '') {
     if ($newsItem == '' || !is_iterable($newsItem) || !isset($newsItem['title']) || empty($newsItem['title']) || !isset($newsItem['source']) || empty($newsItem['source'])) {
@@ -154,7 +229,6 @@ final class NewsarticleController extends ControllerBase {
       ]);
   
       if (is_array($newsarticle) && count($newsarticle) > 0) {
-        // return reset($newsarticle)->id();
         $newsarticle = reset($newsarticle);
         if ($newsarticle instanceof Newsarticle) {
           $updateReq = FALSE;
@@ -180,8 +254,6 @@ final class NewsarticleController extends ControllerBase {
           $newsarticle
         ];
       } else {
-        // date field insert?.
-
         $newsarticle = [
           'label' => $newsItem['title'],
           'body' => [
@@ -206,6 +278,9 @@ final class NewsarticleController extends ControllerBase {
     }
   }
 
+  /**
+   * Remove all newsarticle.
+   */
   public static function removeAll() {
     $newsarticle_entity_storage = \Drupal::entityTypeManager()->getStorage('newsarticle');
     $nids = array_values(\Drupal::entityQuery('newsarticle')->accessCheck(FALSE)->execute());
