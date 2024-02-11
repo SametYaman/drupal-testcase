@@ -5,3 +5,19 @@ entity.newsarticle.settings:
     _title: 'Newsarticle'
   requirements:
     _permission: 'administer newsarticle'
+
+newsarticle.import:
+  path: '/newsarticle/import'
+  defaults:
+    _title: 'Import Newsarticle'
+    _controller: '\Drupal\newsarticle\Controller\NewsarticleController::build'
+  requirements:
+    _permission: 'administer site configuration'
+
+newsarticle.remove_all:
+  path: '/newsarticle/remove-all'
+  defaults:
+    _title: 'Remove All Newsarticle'
+    _controller: '\Drupal\newsarticle\Controller\NewsarticleController::removeAll'
+  requirements:
+    _permission: 'administer site configuration'

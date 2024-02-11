@@ -164,7 +164,7 @@ final class Newsarticle extends RevisionableContentEntityBase implements Newsart
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Date'))
+      ->setLabel(t('Publication Date'))
       ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'timestamp',

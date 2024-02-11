@@ -18,7 +18,7 @@ final class NewsarticleListBuilder extends EntityListBuilder {
     $header['label'] = $this->t('Label');
     $header['status'] = $this->t('Status');
     $header['uid'] = $this->t('Author');
-    $header['created'] = $this->t('Created');
+    $header['created'] = $this->t('Publication Date');
     return $header + parent::buildHeader();
   }
 
