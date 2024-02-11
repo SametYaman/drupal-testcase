@@ -1,6 +1,7 @@
 <?php
 namespace Drupal\newsarticle\Commands;
 
+use Drupal\newsarticle\Controller\NewsarticleController;
 use Drush\Commands\DrushCommands;
 use GuzzleHttp\ClientInterface;
 
@@ -40,33 +41,15 @@ class NewsarticleCommands extends DrushCommands {
    * @aliases import_news
    */
   public function importNewsarticle() {
-    try {
-      $response = $this->httpClient->request('GET', 'https://riad-news-api.vercel.app/api/news');
-      $statusCode = $response->getStatusCode();
-      
-      if ($statusCode == 200) {
-        $body = $response->getBody();
-        $data = json_decode($body, true);
-
-        if ($data['status'] == 'success' && is_iterable($data) && count($data['data']) > 0) {
-          $data = $data['data'];
-
-          foreach ($data as $newsItem) {
-            $this->output()->writeln("");
-            $this->output()->writeln($newsItem['source']);
-            $this->output()->writeln($newsItem['title']);
-            $this->output()->writeln('------------------------------');
-          }
-
-          $this->output()->writeln("Total Newsarticle:" . count($data));
-        }
+    $response = NewsarticleController::importNewsarticle($this->httpClient, FALSE);
+    if (is_iterable($response)) {
+      if (isset($response[0]) && $response[0] == FALSE && isset($response[1])) {
+        $this->io()->error($response[1]);
+      } else if (isset($response['insert']) && isset($response['update'])) {
+        $this->io()->success('Newsarticle Inserted: ' . $response['insert'] . ' - Newsarticle Updated: ' . $response['update']);
       }
-      else {
-        $this->output()->writeln('API request failed.');
-      }
-    }
-    catch (\Exception $e) {
-      $this->output()->writeln('An error occurred during the API request: ' . $e->getMessage());
+    } else {
+      $this->io()->error('$response must be array.');
     }
   }
 }

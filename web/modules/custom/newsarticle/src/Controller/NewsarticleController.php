@@ -32,14 +32,23 @@ final class NewsarticleController extends ControllerBase {
    * Builds the response.
    */
   public function build() {
-    $build = [
-      '#markup' => $this->t('No action.'),
+    return [
+      '#markup' => $this->importNewsarticle($this->httpClient, TRUE),
       '#cache' => [
         'max-age' => 0
       ]
     ];
+  }
+  
+  /**
+   * Import Newsarticle from API.
+   */
+  public static function importNewsarticle($httpClient, $buildResponse = FALSE) {
+    if ($buildResponse) {
+      $response = 'No action.';
+    }
     try {
-      $response = $this->httpClient->request('GET', 'https://riad-news-api.vercel.app/api/news');
+      $response = $httpClient->request('GET', 'https://riad-news-api.vercel.app/api/news');
       $statusCode = $response->getStatusCode();
       if ($statusCode == 200) {
         $body = $response->getBody()->getContents();
@@ -62,20 +71,29 @@ final class NewsarticleController extends ControllerBase {
           }
           
           \Drupal::logger('newsarticle')->notice("Total Newsarticle: " . count($data) . ' - Inserted: ' . $resultCounts['insert'] . ' - Updated: ' . $resultCounts['update']);
-          $build['#markup'] = "Total Newsarticle: " . count($data) . '<br>Inserted: ' . $resultCounts['insert'] . '<br>Updated: ' . $resultCounts['update'];
-          return $build;
+          if ($buildResponse) {
+            $response = "Total Newsarticle: " . count($data) . '<br>Inserted: ' . $resultCounts['insert'] . '<br>Updated: ' . $resultCounts['update'];
+            return $response;
+          }
+          return $resultCounts;
         }
       }
       else {
         \Drupal::logger('newsarticle')->error('API request failed.');
+        if (!$buildResponse) {
+          return [FALSE, 'API request failed.'];
+        }
       }
     }
     catch (\Exception $e) {
       \Drupal::logger('newsarticle')->error('An error occurred during the API request: ' . $e->getMessage());
-      $build['#markup'] = 'No action.<br><b>Error:</b><br><code>' . $e->getMessage() . '</code>';
+      if ($buildResponse) {
+        $response = 'No action.<br><b>Error:</b><br><code>' . $e->getMessage() . '</code>';
+        return $response;
+      }
+      return [FALSE, $e->getMessage()];
     }
-
-    return $build;
+    return FALSE;
   }
 
   /**
