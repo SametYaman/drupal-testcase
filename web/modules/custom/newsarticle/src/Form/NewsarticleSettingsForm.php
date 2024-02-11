@@ -8,40 +8,44 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Configuration form for a newsarticle entity type.
  */
-final class NewsarticleSettingsForm extends FormBase {
+final class NewsarticleSettingsForm extends FormBase
+{
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getFormId(): string {
-    return 'newsarticle_settings';
-  }
+    /**
+     * {@inheritdoc}
+     */
+    public function getFormId(): string
+    {
+        return 'newsarticle_settings';
+    }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function buildForm(array $form, FormStateInterface $form_state): array {
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(array $form, FormStateInterface $form_state): array
+    {
 
-    $form['settings'] = [
-      '#markup' => $this->t('Settings form for a newsarticle entity type.'),
-    ];
+        $form['settings'] = [
+        '#markup' => $this->t('Settings form for a newsarticle entity type.'),
+        ];
 
-    $form['actions'] = [
-      '#type' => 'actions',
-      'submit' => [
+        $form['actions'] = [
+        '#type' => 'actions',
+        'submit' => [
         '#type' => 'submit',
         '#value' => $this->t('Save'),
-      ],
-    ];
+        ],
+        ];
 
-    return $form;
-  }
+        return $form;
+    }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $this->messenger()->addStatus($this->t('The configuration has been updated.'));
-  }
+    /**
+     * {@inheritdoc}
+     */
+    public function submitForm(array &$form, FormStateInterface $form_state): void
+    {
+        $this->messenger()->addStatus($this->t('The configuration has been updated.'));
+    }
 
 }

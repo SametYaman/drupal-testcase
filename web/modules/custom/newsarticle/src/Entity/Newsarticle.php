@@ -64,124 +64,147 @@ use Drupal\user\EntityOwnerTrait;
  *   field_ui_base_route = "entity.newsarticle.settings",
  * )
  */
-final class Newsarticle extends RevisionableContentEntityBase implements NewsarticleInterface {
+final class Newsarticle extends RevisionableContentEntityBase implements NewsarticleInterface
+{
 
-  use EntityChangedTrait;
-  use EntityOwnerTrait;
+    use EntityChangedTrait;
+    use EntityOwnerTrait;
 
-  /**
-   * {@inheritdoc}
-   */
-  public function preSave(EntityStorageInterface $storage): void {
-    parent::preSave($storage);
-    if (!$this->getOwnerId()) {
-      // If no owner has been set explicitly, make the anonymous user the owner.
-      $this->setOwnerId(0);
+    /**
+     * {@inheritdoc}
+     */
+    public function preSave(EntityStorageInterface $storage): void
+    {
+        parent::preSave($storage);
+        if (!$this->getOwnerId()) {
+            // If no owner has been set explicitly, make the anonymous user the owner.
+            $this->setOwnerId(0);
+        }
     }
-  }
 
-  /**
-   * {@inheritdoc}
-   */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
+    /**
+     * {@inheritdoc}
+     */
+    public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array
+    {
 
-    $fields = parent::baseFieldDefinitions($entity_type);
+        $fields = parent::baseFieldDefinitions($entity_type);
 
-    $fields['label'] = BaseFieldDefinition::create('string')
-      ->setRevisionable(TRUE)
-      ->setLabel(t('Title'))
-      ->setRequired(TRUE)
-      ->setSetting('max_length', 255)
-      ->setDisplayOptions('form', [
-        'type' => 'string_textfield',
-        'weight' => -5,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayOptions('view', [
-        'label' => 'hidden',
-        'type' => 'string',
-        'weight' => -5,
-      ])
-      ->setDisplayConfigurable('view', TRUE);
+        $fields['label'] = BaseFieldDefinition::create('string')
+            ->setRevisionable(true)
+            ->setLabel(t('Title'))
+            ->setRequired(true)
+            ->setSetting('max_length', 255)
+            ->setDisplayOptions(
+                'form', [
+                'type' => 'string_textfield',
+                'weight' => -5,
+                ]
+            )
+            ->setDisplayConfigurable('form', true)
+            ->setDisplayOptions(
+                'view', [
+                'label' => 'hidden',
+                'type' => 'string',
+                'weight' => -5,
+                ]
+            )
+            ->setDisplayConfigurable('view', true);
 
-    $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setRevisionable(TRUE)
-      ->setLabel(t('Status'))
-      ->setDefaultValue(TRUE)
-      ->setSetting('on_label', 'Enabled')
-      ->setDisplayOptions('form', [
-        'type' => 'boolean_checkbox',
-        'settings' => [
-          'display_label' => FALSE,
-        ],
-        'weight' => 0,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayOptions('view', [
-        'type' => 'boolean',
-        'label' => 'above',
-        'weight' => 0,
-        'settings' => [
-          'format' => 'enabled-disabled',
-        ],
-      ])
-      ->setDisplayConfigurable('view', TRUE);
+        $fields['status'] = BaseFieldDefinition::create('boolean')
+            ->setRevisionable(true)
+            ->setLabel(t('Status'))
+            ->setDefaultValue(true)
+            ->setSetting('on_label', 'Enabled')
+            ->setDisplayOptions(
+                'form', [
+                'type' => 'boolean_checkbox',
+                'settings' => [
+                'display_label' => false,
+                ],
+                'weight' => 0,
+                ]
+            )
+            ->setDisplayConfigurable('form', true)
+            ->setDisplayOptions(
+                'view', [
+                'type' => 'boolean',
+                'label' => 'above',
+                'weight' => 0,
+                'settings' => [
+                'format' => 'enabled-disabled',
+                ],
+                ]
+            )
+            ->setDisplayConfigurable('view', true);
 
-    $fields['body'] = BaseFieldDefinition::create('text_with_summary')
-      ->setLabel(t('Body'))
-      ->setDisplayOptions('view', [
-        'label' => 'inline',
-        'type' => 'text_default',
-      ])
-      ->setDisplayOptions('form', [
-        'label' => 'above',
-        'type' => 'text_textarea_with_summary',
-        'weight' => 0,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+        $fields['body'] = BaseFieldDefinition::create('text_with_summary')
+            ->setLabel(t('Body'))
+            ->setDisplayOptions(
+                'view', [
+                'label' => 'inline',
+                'type' => 'text_default',
+                ]
+            )
+            ->setDisplayOptions(
+                'form', [
+                'label' => 'above',
+                'type' => 'text_textarea_with_summary',
+                'weight' => 0,
+                ]
+            )
+            ->setDisplayConfigurable('form', true)
+            ->setDisplayConfigurable('view', true);
 
-    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
-      ->setRevisionable(TRUE)
-      ->setLabel(t('Author'))
-      ->setSetting('target_type', 'user')
-      ->setDefaultValueCallback(self::class . '::getDefaultEntityOwner')
-      ->setDisplayOptions('form', [
-        'type' => 'entity_reference_autocomplete',
-        'settings' => [
-          'match_operator' => 'CONTAINS',
-          'size' => 60,
-          'placeholder' => '',
-        ],
-        'weight' => 15,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayOptions('view', [
-        'label' => 'above',
-        'type' => 'author',
-        'weight' => 15,
-      ])
-      ->setDisplayConfigurable('view', TRUE);
+        $fields['uid'] = BaseFieldDefinition::create('entity_reference')
+            ->setRevisionable(true)
+            ->setLabel(t('Author'))
+            ->setSetting('target_type', 'user')
+            ->setDefaultValueCallback(self::class . '::getDefaultEntityOwner')
+            ->setDisplayOptions(
+                'form', [
+                'type' => 'entity_reference_autocomplete',
+                'settings' => [
+                'match_operator' => 'CONTAINS',
+                'size' => 60,
+                'placeholder' => '',
+                ],
+                'weight' => 15,
+                ]
+            )
+            ->setDisplayConfigurable('form', true)
+            ->setDisplayOptions(
+                'view', [
+                'label' => 'above',
+                'type' => 'author',
+                'weight' => 15,
+                ]
+            )
+            ->setDisplayConfigurable('view', true);
 
-    $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Publication Date'))
-      ->setDisplayOptions('view', [
-        'label' => 'above',
-        'type' => 'timestamp',
-        'weight' => 20,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayOptions('form', [
-        'type' => 'datetime_timestamp',
-        'weight' => 20,
-      ])
-      ->setDisplayConfigurable('view', TRUE);
+        $fields['created'] = BaseFieldDefinition::create('created')
+            ->setLabel(t('Publication Date'))
+            ->setDisplayOptions(
+                'view', [
+                'label' => 'above',
+                'type' => 'timestamp',
+                'weight' => 20,
+                ]
+            )
+            ->setDisplayConfigurable('form', true)
+            ->setDisplayOptions(
+                'form', [
+                'type' => 'datetime_timestamp',
+                'weight' => 20,
+                ]
+            )
+            ->setDisplayConfigurable('view', true);
 
-    $fields['changed'] = BaseFieldDefinition::create('changed')
-      ->setLabel(t('Changed'))
-      ->setDescription(t('The time that the newsarticle was last edited.'));
+        $fields['changed'] = BaseFieldDefinition::create('changed')
+            ->setLabel(t('Changed'))
+            ->setDescription(t('The time that the newsarticle was last edited.'));
 
-    return $fields;
-  }
+        return $fields;
+    }
 
 }

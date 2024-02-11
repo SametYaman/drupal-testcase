@@ -9,6 +9,7 @@ use Drupal\user\EntityOwnerInterface;
 /**
  * Provides an interface defining a newsarticle entity type.
  */
-interface NewsarticleInterface extends ContentEntityInterface, EntityOwnerInterface, EntityChangedInterface {
+interface NewsarticleInterface extends ContentEntityInterface, EntityOwnerInterface, EntityChangedInterface
+{
 
 }
